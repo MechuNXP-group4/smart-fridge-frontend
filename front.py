@@ -6,11 +6,20 @@ import aiohttp
 import asyncio
 
 from items import item_name, item_images, item_durability
+from custom import *
 
 st.set_page_config(
     page_title='2022 梅竹黑客松 - 機智博士',
     layout='wide'
 )
+
+st.markdown(
+    f'<link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.9.96/css/materialdesignicons.min.css" rel="stylesheet" />',
+    unsafe_allow_html=True
+)
+
+with open('style.css') as f:
+    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 st.title('冰箱內的物品')
 
@@ -42,10 +51,19 @@ async def get_stream_data():
             async for msg in websocket:
                 data = msg.json()
                 if data['error'] == 1:
+                    with placeholder.container():
+                        show_custom(make_text('Backend Error', 1.2, 'red', 'center'))
                     continue
+
                 items = data['data']
                 if len(items) == 0:
-                    placeholder.write('目前沒有東西喔')
+                    with placeholder.container():
+                        icon = make_icon(
+                            'fridge-industrial-off-outline',
+                            8, '#599cff', 'center'
+                        )
+                        text = make_text('冰箱空空的，買點食材餵飽它吧～', 1.2, '#599cff', 'center')
+                        show_custom(icon + text)
                 else:
                     with placeholder.container():
                         cols = st.columns(4)

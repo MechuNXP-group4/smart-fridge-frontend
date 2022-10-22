@@ -8,10 +8,10 @@ item_name = [
 ]
 
 item_images = [
-    Image.open('assets/apple.jpg'),
-    Image.open('assets/cabbage.jpg'),
-    Image.open('assets/cucumber.jpg'),
-    Image.open('assets/potato.jpg')
+    Image.open('assets/foods/apple.jpg'),
+    Image.open('assets/foods/cabbage.jpg'),
+    Image.open('assets/foods/cucumber.jpg'),
+    Image.open('assets/foods/potato.jpg')
 ]
 
 item_durability = [
