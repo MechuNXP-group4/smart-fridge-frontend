@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import requests
 
 import streamlit as st
 
@@ -7,6 +8,8 @@ import asyncio
 
 from items import item_name, item_images, item_durability
 from custom import *
+
+base_url = '127.0.0.1:5000'
 
 st.set_page_config(
     page_title='2022 梅竹黑客松 - 機智博士',
@@ -22,6 +25,10 @@ with open('style.css') as f:
     st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 st.title('冰箱內的物品')
+
+def on_mode_change():
+    requests.get(f'http://{base_url}/switch')
+removing_mode = st.checkbox('Removing Mode', on_change=on_mode_change)
 
 def display_item(item):
     item_id = int(item['item_id'])
@@ -41,7 +48,7 @@ def display_item(item):
         exp_time_str = f'<span style="color: red;">{exp_time_str}</span>'
     show_custom(make_list_item('clock', '最早的過期時間', exp_time_str))
 
-WS_CONN = 'ws://127.0.0.1:5000/get'
+WS_CONN = f'ws://{base_url}/get'
 
 placeholder = st.empty()
 
