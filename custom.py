@@ -14,5 +14,18 @@ def make_text(text, size, color, align):
         </div>
     '''
 
+def make_list_item(icon, label, value):
+    return f'''
+        <div class="list-item">
+            <div class="icon">
+                <i class="mdi mdi-{icon}"></i>
+            </div>
+            <div class="right">
+                <div class="label">{label}</div>
+                <div class="value">{value}</div>
+            </div>
+        </div>
+    '''
+
 def show_custom(html):
     st.markdown(html, unsafe_allow_html=True)

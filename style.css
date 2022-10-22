@@ -1,0 +1,25 @@
+/* div[data-testid="stVerticalBlock"] {
+    padding: 0.5rem 0.5rem 1rem 0.5rem;
+    box-shadow: 1px 1px 5px;
+} */
+
+.list-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.list-item .icon {
+    font-size: 1.8rem;
+}
+
+.list-item .right {
+    display: flex;
+    flex-direction: column;
+    margin-left: 1rem;
+}
+
+.list-item .right .label {
+    font-size: 1.2rem;
+}

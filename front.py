@@ -33,13 +33,13 @@ def display_item(item):
 
     st.image(image)
     st.subheader(name)
-    st.write(f'#️⃣庫存數量：{count}')
+    show_custom(make_list_item('pound-box', '庫存數量', count))
 
     now = datetime.now()
     exp_time_str = str(exp_time)
     if now > exp_time:
         exp_time_str = f'<span style="color: red;">{exp_time_str}</span>'
-    st.markdown(f'🕒最早的過期時間：{exp_time_str}', unsafe_allow_html=True)
+    show_custom(make_list_item('clock', '最早的過期時間', exp_time_str))
 
 WS_CONN = 'ws://127.0.0.1:5000/get'
 
