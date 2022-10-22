@@ -1,7 +1,11 @@
-from items import get_items, item_name, item_images, item_durability
-from streamlit_elements import elements, mui
-import streamlit as st
 from datetime import datetime, timedelta
+
+import streamlit as st
+
+import aiohttp
+import asyncio
+
+from items import item_name, item_images, item_durability
 
 st.set_page_config(
     page_title='2022 梅竹黑客松 - 機智博士',
@@ -15,52 +19,39 @@ def display_item(item):
     image = item_images[item_id]
     name = item_name[item_id]
     count = item['count']
-    exp_time = datetime.strptime(item['timestamps'][0], '%a, %d %b %Y %H:%M:%S %Z') + \
+    exp_time = datetime.strptime(item['timestamps'][0], '%Y-%m-%d %H:%M:%S') + \
         timedelta(seconds=item_durability[item_id])
 
-    with mui.Grid(
-        item=True,
-        xs=12, md=3
-    ):
-        with mui.Card():
-            mui.CardMedia(
-                component='img',
-                height=250,
-                src=image
-            )
-            with mui.CardContent():
-                mui.Typography(name, variant='h4')
-                with mui.List():
-                    with mui.ListItem():
-                        with mui.ListItemAvatar():
-                            with mui.Avatar():
-                                mui.icon.Tag()
-                        mui.ListItemText(
-                            primary='庫存數量',
-                            secondary=count
-                        )
-                    with mui.ListItem():
-                        with mui.ListItemAvatar():
-                            with mui.Avatar():
-                                mui.icon.AccessTime()
-                        now = datetime.now()
-                        color = 'red' if now > exp_time else 'rgba(0, 0, 0, 0.6)'
-                        mui.ListItemText(
-                            primary='最早的過期時間',
-                            secondary=str(exp_time),
-                            secondaryTypographyProps={
-                                'color': color
-                            },
-                        )
+    st.image(image)
+    st.subheader(name)
+    st.write(f'#️⃣庫存數量：{count}')
 
-with elements('content'):
-    items = get_items()
-    if len(items) == 0:
-        mui.Typography('目前沒有東西喔')
-    else:
-        with mui.Grid(
-            container=True,
-            spacing=2,
-        ):
-            for item in items:
-                display_item(item)
+    now = datetime.now()
+    emo = '⚠ ' if now > exp_time else ''
+    st.write(f'🕒最早的過期時間：{emo}{exp_time}')
+
+WS_CONN = 'ws://127.0.0.1:5000/get'
+
+placeholder = st.empty()
+
+async def get_stream_data():
+    async with aiohttp.ClientSession(trust_env = True) as session:
+        async with session.ws_connect(WS_CONN) as websocket:
+            async for msg in websocket:
+                data = msg.json()
+                if data['error'] == 1:
+                    continue
+                items = data['data']
+                if len(items) == 0:
+                    placeholder.write('目前沒有東西喔')
+                else:
+                    with placeholder.container():
+                        cols = st.columns(4)
+                        for i in range(4):
+                            if i < len(items):
+                                with cols[i].container():
+                                    display_item(items[i])
+                            else:
+                                cols[i].empty()
+
+asyncio.run(get_stream_data())

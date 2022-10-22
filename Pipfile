@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 streamlit = "*"
-streamlit-elements = "==0.1.*"
+aiohttp = "*"
 
 [dev-packages]
 
