@@ -27,8 +27,10 @@ def display_item(item):
     st.write(f'#️⃣庫存數量：{count}')
 
     now = datetime.now()
-    emo = '⚠ ' if now > exp_time else ''
-    st.write(f'🕒最早的過期時間：{emo}{exp_time}')
+    exp_time_str = str(exp_time)
+    if now > exp_time:
+        exp_time_str = f'<span style="color: red;">{exp_time_str}</span>'
+    st.markdown(f'🕒最早的過期時間：{exp_time_str}', unsafe_allow_html=True)
 
 WS_CONN = 'ws://127.0.0.1:5000/get'
 
