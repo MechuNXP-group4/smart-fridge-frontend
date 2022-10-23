@@ -5,7 +5,7 @@ import streamlit as st
 import aiohttp
 import asyncio
 
-from items import item_name, item_images, item_durability
+from items import item_name, item_images, item_durability, item_cuisines
 from custom import *
 
 st.set_page_config(
@@ -65,7 +65,19 @@ async def get_stream_data():
                         text = make_text('冰箱空空的，買點食材餵飽它吧～', 1.2, '#599cff', 'center')
                         show_custom(icon + text)
                 else:
+                    has_fresh_item = [ 0 ] * 4
+                    for item in items:
+                        item_id = int(item['item_id'])
+                        now = datetime.now()
+                        last_exp_time = datetime.strptime(item['timestamps'][-1], '%Y-%m-%d %H:%M:%S') + \
+                            timedelta(seconds=item_durability[item_id])
+                        has_fresh_item[item_id] = now <= last_exp_time
+
                     with placeholder.container():
+                        for i in range(4):
+                            if has_fresh_item[i]:
+                                st.info(f'冰箱裡還有新鮮的{item_name[i]}，要不要試試看做成{item_cuisines[i]}', icon='ℹ️')
+
                         cols = st.columns(4)
                         for i in range(4):
                             if i < len(items):
@@ -73,5 +85,6 @@ async def get_stream_data():
                                     display_item(items[i])
                             else:
                                 cols[i].empty()
+                                has_fresh_item[i] = False
 
 asyncio.run(get_stream_data())
